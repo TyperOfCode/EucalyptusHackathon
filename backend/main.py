@@ -12,14 +12,14 @@ client = Groq()
 app = FastAPI()
 
 @app.post("/api/submitReceipt")
-def process_receipt():
+def process_receipt(file: UploadFile = File(...)):
     receipt_image = None
     try:
-        receipt_image = open("test/testreceipt.png", "rb").read()
+        receipt_image = file.file.read()
     except:
         raise HTTPException(status_code=500, detail="Failed to upload image")
-    # finally:
-        # file.file.close()
+    finally:
+        file.file.close()
     
     #                                   SAVING API CREDITS FOR THE MOMENT
     receipt_json = ocr_from_groq(receipt_image)
@@ -41,9 +41,9 @@ def process_receipt():
     #         "MISSION CORN OFFER"
     #     ]
     # }""")
-    
-    print(receipt_json)
 
+    print(receipt_json);
+    
     results = []
     for item_name in receipt_json["items"]:
         nutrition_row = nutrition_search(item_name)
