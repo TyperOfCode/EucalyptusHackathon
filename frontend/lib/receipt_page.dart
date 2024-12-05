@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:camera/camera.dart';
 import 'package:euchack/components/standard_scaffold.dart';
 import 'package:euchack/constants/app_styles.dart';
@@ -7,6 +9,8 @@ import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
 import 'package:provider/provider.dart';
 import 'package:http/http.dart' as http;
+
+const baseApiUrl = "https://dev.ryanh.co";
 
 class ReceiptPage extends StatefulWidget {
   const ReceiptPage({super.key});
@@ -67,14 +71,14 @@ class _ReceiptPageState extends State<ReceiptPage> {
     try {
       final imageFile = await camController.takePicture();
 
-      print(imageFile.path);
+      _uploadImage(File(imageFile.path));
     } catch (e) {
       print(e);
-    } finally {
-      setState(() {
-        isTakingPicture = false;
-      });
     }
+
+    setState(() {
+      isTakingPicture = false;
+    });
   }
 
   @override
@@ -85,7 +89,7 @@ class _ReceiptPageState extends State<ReceiptPage> {
 
   @override
   Widget build(BuildContext context) {
-    const pageTitle = "Scan Receipt";
+    const pageTitle = "Receipt";
     return StandardScaffold(
       automaticallyImplyLeading: true,
       showNavBar: false,
@@ -102,8 +106,23 @@ class _ReceiptPageState extends State<ReceiptPage> {
             buildCamera(camController),
             const Gap(20),
             ElevatedButton(
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all(primaryColor),
+                padding: WidgetStateProperty.all(
+                  const EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                ),
+              ),
               onPressed: takePictureAndSend,
-              child: const Icon(Icons.camera_alt, size: 30, color: textColor),
+              child: !isTakingPicture
+                  ? const Icon(Icons.document_scanner_outlined,
+                      size: 30, color: textColor)
+                  : SizedBox(
+                      width: 30,
+                      height: 30,
+                      child: const CircularProgressIndicator(
+                        color: textColor,
+                      ),
+                    ),
             ),
           ],
         ),
@@ -124,11 +143,11 @@ Widget buildCamera(CameraController camController) {
         child: ClipRRect(
           borderRadius: BorderRadius.circular(20),
           child: SizedOverflowBox(
-            size: const Size(300, 395),
+            size: const Size(300, 495),
             alignment: Alignment.center,
             child: SizedBox(
               width: 300,
-              height: 396,
+              height: 496,
               child: camController.value.isInitialized
                   ? CameraPreview(camController)
                   : const Center(
@@ -141,4 +160,24 @@ Widget buildCamera(CameraController camController) {
       ),
     ],
   );
+}
+
+Future<void> _uploadImage(File image) async {
+  final String apiUrl = '$baseApiUrl/api/submitReceipt';
+
+  try {
+    var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
+    request.files.add(await http.MultipartFile.fromPath('file', image.path));
+
+    var response = await request.send();
+
+    if (response.statusCode == 200) {
+      print('Image uploaded successfully');
+      print(await response.stream.bytesToString());
+    } else {
+      print('Image upload failed: ${response.statusCode}');
+    }
+  } catch (e) {
+    print('Error uploading image: $e');
+  }
 }
