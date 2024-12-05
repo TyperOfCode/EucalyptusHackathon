@@ -2,12 +2,11 @@ import 'package:euchack/components/grocery_list_chip.dart';
 import 'package:euchack/components/standard_scaffold.dart';
 import 'package:euchack/constants/app_styles.dart';
 import 'package:euchack/constants/colors.dart';
-import 'package:euchack/providers/cam_provider.dart';
 import 'package:euchack/receipt_page.dart';
+import 'package:euchack/stat_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
-import 'package:provider/provider.dart';
 
 class GroceryPage extends StatefulWidget {
   const GroceryPage({super.key});
@@ -37,7 +36,7 @@ class _GroceryPageState extends State<GroceryPage> {
             children: [
               buildHeader(),
               const Gap(36),
-              buildMoreStatsChip(),
+              buildMoreStatsChip(context),
               const Gap(36),
               buildGroceryList()
             ],
@@ -85,7 +84,7 @@ Widget buildHeader() {
   );
 }
 
-Widget buildMoreStatsChip() {
+Widget buildMoreStatsChip(BuildContext context) {
   return OutlinedButton(
     style: ButtonStyle(
       backgroundColor: WidgetStateProperty.all<Color>(textColor),
@@ -96,7 +95,10 @@ Widget buildMoreStatsChip() {
       ),
     ),
     onPressed: () {
-      print("More stats");
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const StatPage()),
+      );
     },
     child: Container(
       padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),

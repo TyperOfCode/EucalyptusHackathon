@@ -175,6 +175,7 @@ Future<void> _uploadImage(File image) async {
       print('Image uploaded successfully');
       print(await response.stream.bytesToString());
     } else {
+      print(await response.stream.bytesToString());
       print('Image upload failed: ${response.statusCode}');
     }
   } catch (e) {
