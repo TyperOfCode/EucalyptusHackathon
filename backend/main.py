@@ -57,6 +57,11 @@ def process_receipt(file: UploadFile = File(...)):
 
     return { "results": results }
 
+
+@app.post("/api/testEcho")
+def test_echo(data: str):
+    return data
+
 def ocr_from_groq(image: bytes) -> Optional[str]:
     base64_image = base64.b64encode(image).decode("utf-8")
 
@@ -102,3 +107,4 @@ def ocr_from_groq(image: bytes) -> Optional[str]:
     
 def call_with_bland():
     pass
+  
