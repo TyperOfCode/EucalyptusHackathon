@@ -12,19 +12,20 @@ client = Groq()
 app = FastAPI()
 
 @app.post("/api/submitReceipt")
-def process_receipt(file: UploadFile = File(...)):
+def process_receipt():
     receipt_image = None
     try:
-        receipt_image = file.file.read()
+        receipt_image = open("test/testreceipt.png", "rb").read()
     except:
         raise HTTPException(status_code=500, detail="Failed to upload image")
-    finally:
-        file.file.close()
+    # finally:
+        # file.file.close()
     
     #                                   SAVING API CREDITS FOR THE MOMENT
     receipt_json = ocr_from_groq(receipt_image)
     if receipt_json is None:
         raise HTTPException(status_code=500, detail="Failed to visually recognise receipt")
+      
     # receipt_json = json.loads("""{
     #     "items": [
     #         "SELECT SAUCE HOISIN 320ML",
@@ -40,6 +41,8 @@ def process_receipt(file: UploadFile = File(...)):
     #         "MISSION CORN OFFER"
     #     ]
     # }""")
+    
+    print(receipt_json)
 
     results = []
     for item_name in receipt_json["items"]:
@@ -103,7 +106,7 @@ def ocr_from_groq(image: bytes) -> Optional[str]:
         stop=None,
     )
 
-    return completion.choices[0].message.content
+    return json.loads(completion.choices[0].message.content)
     
 def call_with_bland():
     pass
