@@ -1,49 +1,46 @@
-import 'package:euchack/components/groceryListChip.dart';
+import 'package:euchack/components/grocery_list_chip.dart';
+import 'package:euchack/components/standard_scaffold.dart';
 import 'package:euchack/constants/app_styles.dart';
 import 'package:euchack/constants/colors.dart';
+import 'package:euchack/providers/cam_provider.dart';
+import 'package:euchack/receipt_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gap/gap.dart';
+import 'package:provider/provider.dart';
 
-class GroceryPage extends StatelessWidget {
+class GroceryPage extends StatefulWidget {
   const GroceryPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    const title = "Grocery";
+  State<GroceryPage> createState() => _GroceryPageState();
+}
 
-    return Scaffold(
-      backgroundColor: backgroundColor,
-      appBar: AppBar(
-        backgroundColor: textColor,
-        title: const Text(title, style: titleText),
+class _GroceryPageState extends State<GroceryPage> {
+  @override
+  Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(
+      const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        systemNavigationBarColor: textColor,
       ),
+    );
+
+    const title = "Grocery";
+    return StandardScaffold(
+      title: title,
+      floatingActionButton: buildScanReceiptButton(context),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
             children: [
-              generateHeader(),
-              const Gap(33),
-              generateMoreStatsChip(),
-              const Gap(33),
-              generateGroceryList()
+              buildHeader(),
+              const Gap(36),
+              buildMoreStatsChip(),
+              const Gap(36),
+              buildGroceryList()
             ],
-          ),
-        ),
-      ),
-      floatingActionButton: SizedBox(
-        width: 80,
-        height: 120,
-        child: FittedBox(
-          child: FloatingActionButton(
-            backgroundColor: primaryColor,
-            onPressed: () => {},
-            shape: const CircleBorder(),
-            child: const Icon(
-              Icons.receipt_long_outlined,
-              color: textColor,
-              size: 40,
-            ),
           ),
         ),
       ),
@@ -51,14 +48,14 @@ class GroceryPage extends StatelessWidget {
   }
 }
 
-Widget generateHeader() {
+Widget buildHeader() {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       const Text("Good afternoon Elise,", style: header2Text),
       Row(
         children: [
-          const Text("We need some", style: header1Text),
+          const Text("You need some", style: header1Text),
           const Gap(10),
           Stack(
             children: [
@@ -88,7 +85,7 @@ Widget generateHeader() {
   );
 }
 
-Widget generateMoreStatsChip() {
+Widget buildMoreStatsChip() {
   return OutlinedButton(
     style: ButtonStyle(
       backgroundColor: WidgetStateProperty.all<Color>(textColor),
@@ -117,7 +114,7 @@ Widget generateMoreStatsChip() {
   );
 }
 
-Widget generateGroceryList() {
+Widget buildGroceryList() {
   // TODO: should pull from db or something
   const statList = [
     {"stat": "+280%", "text": "Fibre"},
@@ -158,7 +155,7 @@ Widget generateGroceryList() {
         runSpacing: 10,
         children: [
           for (var stat in statList)
-            generateGroceryStatChip(stat["stat"], stat["text"]),
+            buildGroceryStatChip(stat["stat"], stat["text"]),
         ],
       ),
       const Gap(20),
@@ -178,7 +175,7 @@ Widget generateGroceryList() {
   );
 }
 
-Widget generateGroceryStatChip(String? stat, String? text) {
+Widget buildGroceryStatChip(String? stat, String? text) {
   if (stat == null || text == null) {
     return Container();
   }
@@ -191,4 +188,32 @@ Widget generateGroceryStatChip(String? stat, String? text) {
       Text(text, style: groceryListText),
     ],
   );
+}
+
+Widget buildScanReceiptButton(BuildContext context) {
+  return SizedBox(
+    width: 80,
+    height: 120,
+    child: FittedBox(
+      child: FloatingActionButton(
+        backgroundColor: primaryColor,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const ReceiptPage()),
+          );
+        },
+        shape: const CircleBorder(),
+        child: const Icon(
+          Icons.receipt_long_outlined,
+          color: textColor,
+          size: 40,
+        ),
+      ),
+    ),
+  );
+}
+
+void onFloatingActionButtonPressed() {
+  print("Floating action button pressed");
 }

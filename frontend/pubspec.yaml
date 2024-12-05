@@ -12,13 +12,19 @@ dependencies:
 
   cupertino_icons: ^1.0.6
   gap: ^3.0.1
+  camera: ^0.11.0+2
+  provider: ^6.1.2
+  
+  camera_android_camerax: ^0.6.8+2
+  path_provider: ^2.1.5
+  http: ^1.2.2
   
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^5.0.0
 
 flutter:
 

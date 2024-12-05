@@ -1,9 +1,15 @@
-import 'package:euchack/constants/colors.dart';
 import 'package:euchack/grocery.dart';
-import 'package:flutter/material.dart';
+import 'package:euchack/providers/cam_provider.dart';
 
-void main() {
-  runApp(const MyApp());
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(ChangeNotifierProvider(
+    create: (context) => CameraProvider()..initializeCameras(),
+    child: const MyApp(),
+  ));
 }
 
 class MyApp extends StatelessWidget {
