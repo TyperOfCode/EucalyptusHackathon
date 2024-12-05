@@ -105,8 +105,41 @@ def ocr_from_groq(image: bytes) -> Optional[str]:
         response_format={"type": "json_object"},
         stop=None,
     )
+    
+    firstJson = json.loads(completion.choices[0].message.content)
+    print(firstJson)
+    
+    nextModel = "llama-3.1-70b-versatile"
+    secondCompletion = client.chat.completions.create(
+        model=nextModel,
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": f"""
+                            Here are some items from a receipt. Please replace the items with user friendly names of the items in JSON format.
+                            Do not include brand name. Just use the common grocery name.
+                            
+                            ```
+                            ${firstJson}
+                            ```
+                        """
+                    },
+                ]
+            },
+        ],
+        temperature=0.8,
+        max_tokens=1024,
+        top_p=1,
+        stream=False,
+        response_format={"type": "json_object"},
+        stop=None,
+    )
+    
 
-    return json.loads(completion.choices[0].message.content)
+    return json.loads(secondCompletion.choices[0].message.content)
     
 def call_with_bland():
     pass
