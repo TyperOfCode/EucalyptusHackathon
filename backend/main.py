@@ -22,24 +22,24 @@ def process_receipt(file: UploadFile = File(...)):
         file.file.close()
     
     #                                   SAVING API CREDITS FOR THE MOMENT
-    # receipt_json = ocr_from_groq(receipt_image)
-    # if receipt_json is None:
-    #     raise HTTPException(status_code=500, detail="Failed to visually recognise receipt")
-    receipt_json = json.loads("""{
-        "items": [
-            "SELECT SAUCE HOISIN 320ML",
-            "QUICK EZEE ORIGINAL 60 TAB",
-            "QUEEN ESSENCE INITATVANILLA 200ML",
-            "THIGH FILLET RSPCA APPROVED CHKN",
-            "ICONA F/O COFFEE CLASC .DRK RST 400G",
-            "MAINLAND CHEESE TASTY 1KG",
-            "ENERGY DRINK SUGARFREE 4X275ML",
-            "UNICORN TRIPLE CREAMBRIE 125G",
-            "MISSION CORN CHIPS EXTREME CHEESE 230G",
-            "MISSION CHEESY NACHOS CRN CHIPS 230G",
-            "MISSION CORN OFFER"
-        ]
-    }""")
+    receipt_json = ocr_from_groq(receipt_image)
+    if receipt_json is None:
+        raise HTTPException(status_code=500, detail="Failed to visually recognise receipt")
+    # receipt_json = json.loads("""{
+    #     "items": [
+    #         "SELECT SAUCE HOISIN 320ML",
+    #         "QUICK EZEE ORIGINAL 60 TAB",
+    #         "QUEEN ESSENCE INITATVANILLA 200ML",
+    #         "THIGH FILLET RSPCA APPROVED CHKN",
+    #         "ICONA F/O COFFEE CLASC .DRK RST 400G",
+    #         "MAINLAND CHEESE TASTY 1KG",
+    #         "ENERGY DRINK SUGARFREE 4X275ML",
+    #         "UNICORN TRIPLE CREAMBRIE 125G",
+    #         "MISSION CORN CHIPS EXTREME CHEESE 230G",
+    #         "MISSION CHEESY NACHOS CRN CHIPS 230G",
+    #         "MISSION CORN OFFER"
+    #     ]
+    # }""")
 
     results = []
     for item_name in receipt_json["items"]:
